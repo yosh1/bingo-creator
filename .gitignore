@@ -1,9 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
 /.pnp
 .pnp.js
+/node_modules
 .yarn/install-state.gz
 
 # testing
@@ -34,3 +34,34 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.idea/
+.settings/
+.gradle/
+build/
+dist/
+types/
+.sourcemaps
+xcuserdata/
+node_modules/
+Pods/
+*.map
+.DS_Store
+Podfile.lock
+Build/*
+Index/
+.*.sw*
+android-template.iml
+!/build/.npmkeep
+lerna-debug.log
+local.properties
+contents.xcworkspacedata
+android-template/.gradle/
+android-template/app/app.iml
+.capacitor/
+.env
+capacitor-build.log
+
+# Carthage and Carthage-built binaries
+Carthage
+*.xcframework.zip
