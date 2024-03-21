@@ -1,3 +1,5 @@
+/** @format */
+
 import { useState } from "react";
 import Modal from "react-modal";
 
@@ -24,9 +26,9 @@ const BingoComponent = () => {
       .fill(null)
       .map((_, index) => ({
         id: index + 1,
-        name: `Status ${index + 1}`,
-        img: `https://picsum.photos/200/300?random=${index + 1}`,
-        isChecked: index === 12,
+        name: "",
+        img: "",
+        isChecked: false,
       })),
   };
 
@@ -35,17 +37,8 @@ const BingoComponent = () => {
   const [selectedStatus, setSelectedStatus] = useState<StatusInfo | null>(null);
 
   const handleClick = (statusId: number) => {
-    const newBingo = {
-      ...bingo,
-      status: bingo.status.map((status) =>
-        status.id === statusId
-          ? { ...status, isChecked: !status.isChecked }
-          : status
-      ),
-    };
-    setBingo(newBingo);
     setSelectedStatus(
-      newBingo.status.find((status) => status.id === statusId) || null
+      bingo.status.find((status) => status.id === statusId) || null
     );
     setIsModalOpen(true);
   };
@@ -90,13 +83,14 @@ const BingoComponent = () => {
           className={`w-20 h-20 flex flex-col justify-center items-center overflow-hidden ${
             status.isChecked ? "bg-blue-500" : "bg-white"
           } border border-gray-300 rounded shadow`}
-          onClick={() => handleClick(status.id)}
-          disabled={status.isChecked}>
-          <img
-            src={status.img}
-            alt={status.name}
-            className='w-full h-full object-cover'
-          />
+          onClick={() => handleClick(status.id)}>
+          {status.img && (
+            <img
+              src={status.img}
+              alt={status.name}
+              className='w-full h-full object-cover'
+            />
+          )}
           <span className='text-xs'>{status.name}</span>
         </button>
       ))}
@@ -104,9 +98,7 @@ const BingoComponent = () => {
         isOpen={isModalOpen}
         onRequestClose={closeModal}
         contentLabel='Item Details'
-        className={
-          'Modal bg-white w-1/4 h-1/4 p-4 rounded shadow-lg fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
-        }
+        className='Modal'
         overlayClassName='Overlay'>
         {selectedStatus && (
           <div>
