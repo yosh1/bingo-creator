@@ -7,6 +7,7 @@ const useBingoState = () => {
   const [selectedStatus, setSelectedStatus] = useState<StatusInfo | null>(null);
 
   const handleClick = (statusId: number) => {
+    if (statusId === 13) return; // 中央のボックスをクリックしても何もしない
     setSelectedStatus(
       bingo.status.find((status) => status.id === statusId) || null
     );

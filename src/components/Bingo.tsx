@@ -14,10 +14,15 @@ const BingoComponent = () => {
         <button
           key={status.id}
           className={`w-20 h-20 flex flex-col justify-center items-center overflow-hidden ${
-            status.isChecked ? "bg-blue-500" : "bg-white"
+            status.id === 13
+              ? "bg-black text-white"
+              : status.isChecked
+              ? "bg-blue-500"
+              : "bg-white"
           } border border-gray-300 rounded shadow`}
-          onClick={() => handleClick(status.id)}>
-          {status.img && (
+          onClick={() => handleClick(status.id)}
+          disabled={status.id === 13}>
+          {status.img && status.id !== 13 && (
             <img
               src={status.img}
               alt={status.name}
@@ -27,6 +32,7 @@ const BingoComponent = () => {
           <span className='text-xs'>{status.name}</span>
         </button>
       ))}
+
       <Modal
         isOpen={!!selectedStatus}
         onRequestClose={closeModal}
