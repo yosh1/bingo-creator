@@ -1,58 +1,103 @@
 import { useState } from "react";
 import Modal from "react-modal";
 
-interface Item {
-  title: string;
+type StatusInfo = {
   id: number;
+  name: string;
   img: string;
-  isSelected: boolean;
-}
+  isChecked: boolean;
+};
 
-const Bingo = () => {
-  const initialItems: Item[] = Array(25)
-    .fill(null)
-    .map((_, index) => ({
-      title: `Item ${index + 1}`,
-      id: index,
-      img: `https://picsum.photos/200/300?random=${index + 1}`,
-      isSelected: index === 12,
-    }));
+type Bingo = {
+  id: number;
+  title: string;
+  author: string;
+  status: StatusInfo[];
+};
 
-  const [items, setItems] = useState<Item[]>(initialItems);
+const BingoComponent = () => {
+  const initialBingo: Bingo = {
+    id: 1,
+    title: "Bingo 1",
+    author: "Author 1",
+    status: Array(25)
+      .fill(null)
+      .map((_, index) => ({
+        id: index + 1,
+        name: `Status ${index + 1}`,
+        img: `https://picsum.photos/200/300?random=${index + 1}`,
+        isChecked: index === 12,
+      })),
+  };
+
+  const [bingo, setBingo] = useState<Bingo>(initialBingo);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<StatusInfo | null>(null);
 
-  const handleClick = (index: number) => {
-    const newItems = items.map((item, i) =>
-      i === index ? { ...item, isSelected: !item.isSelected } : item
+  const handleClick = (statusId: number) => {
+    const newBingo = {
+      ...bingo,
+      status: bingo.status.map((status) =>
+        status.id === statusId
+          ? { ...status, isChecked: !status.isChecked }
+          : status
+      ),
+    };
+    setBingo(newBingo);
+    setSelectedStatus(
+      newBingo.status.find((status) => status.id === statusId) || null
     );
-    setItems(newItems);
-    setSelectedItem(newItems[index]);
     setIsModalOpen(true);
+  };
+
+  const handleSave = () => {
+    if (selectedStatus) {
+      const newBingo = {
+        ...bingo,
+        status: bingo.status.map((status) =>
+          status.id === selectedStatus.id ? selectedStatus : status
+        ),
+      };
+      setBingo(newBingo);
+    }
+    setIsModalOpen(false);
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (selectedStatus) {
+      setSelectedStatus({ ...selectedStatus, name: e.target.value });
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (selectedStatus) {
+      setSelectedStatus({ ...selectedStatus, img: e.target.value });
+    }
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setSelectedStatus(null);
   };
 
   Modal.setAppElement("#root");
 
   return (
     <div className='grid grid-cols-5 gap-2'>
-      {items.map((item, index) => (
+      {bingo.status.map((status) => (
         <button
-          key={item.id}
+          key={status.id}
           className={`w-20 h-20 flex flex-col justify-center items-center overflow-hidden ${
-            item.isSelected ? "bg-blue-500" : "bg-white"
+            status.isChecked ? "bg-blue-500" : "bg-white"
           } border border-gray-300 rounded shadow`}
-          onClick={() => handleClick(index)}
-          disabled={item.isSelected}>
+          onClick={() => handleClick(status.id)}
+          disabled={status.isChecked}>
           <img
-            src={item.img}
-            alt={item.title}
+            src={status.img}
+            alt={status.name}
             className='w-full h-full object-cover'
           />
-          <span className='text-xs'>{item.title}</span>
+          <span className='text-xs'>{status.name}</span>
         </button>
       ))}
       <Modal
@@ -60,14 +105,23 @@ const Bingo = () => {
         onRequestClose={closeModal}
         contentLabel='Item Details'
         className={
-          'Modal absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded shadow w-96 flex flex-col justify-center items-center'
+          'Modal bg-white w-1/4 h-1/4 p-4 rounded shadow-lg fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
         }
         overlayClassName='Overlay'>
-        {selectedItem && (
+        {selectedStatus && (
           <div>
-            <h2>{selectedItem.title}</h2>
-            <img src={selectedItem.img} alt={selectedItem.title} />
-            <button onClick={closeModal}>Close</button>
+            <input
+              type='text'
+              value={selectedStatus.name}
+              onChange={handleNameChange}
+            />
+            <input
+              type='text'
+              value={selectedStatus.img}
+              onChange={handleImageChange}
+            />
+            <button onClick={handleSave}>Save</button>
+            <button onClick={closeModal}>Cancel</button>
           </div>
         )}
       </Modal>
@@ -75,4 +129,4 @@ const Bingo = () => {
   );
 };
 
-export default Bingo;
+export default BingoComponent;
