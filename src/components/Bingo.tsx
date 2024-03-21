@@ -1,36 +1,41 @@
-/** @format */
-
 import { useState } from "react";
 import Modal from "react-modal";
 
+interface Item {
+  title: string;
+  id: number;
+  img: string;
+  isSelected: boolean;
+}
+
 const Bingo = () => {
-  // Initial array of elements
-  const initialItems = Array(25)
+  const initialItems: Item[] = Array(25)
     .fill(null)
     .map((_, index) => ({
       title: `Item ${index + 1}`,
       id: index,
       img: `https://picsum.photos/200/300?random=${index + 1}`,
-      isSelected: index === 12, // Center element is selected by default
+      isSelected: index === 12,
     }));
 
-  const [items, setItems] = useState(initialItems);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-  const [selectedItem, setSelectedItem] = useState(null); // State to hold the selected item
+  const [items, setItems] = useState<Item[]>(initialItems);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
   const handleClick = (index: number) => {
     const newItems = items.map((item, i) =>
       i === index ? { ...item, isSelected: !item.isSelected } : item
     );
     setItems(newItems);
-    setSelectedItem(items[index]); // Set the selected item for modal display
-    setIsModalOpen(true); // Open the modal when an item is clicked
+    setSelectedItem(newItems[index]);
+    setIsModalOpen(true);
   };
 
-  // Function to close the modal
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  Modal.setAppElement("#root");
 
   return (
     <div className='grid grid-cols-5 gap-2'>
@@ -54,17 +59,17 @@ const Bingo = () => {
         isOpen={isModalOpen}
         onRequestClose={closeModal}
         contentLabel='Item Details'
-        className='Modal'
+        className={
+          'Modal absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded shadow w-96 flex flex-col justify-center items-center'
+        }
         overlayClassName='Overlay'>
-        <div>
-          {selectedItem && (
-            <div>
-              <h2>{selectedItem.title}</h2>
-              <img src={selectedItem.img} alt={selectedItem.title} />
-              <button onClick={closeModal}>Close</button>
-            </div>
-          )}
-        </div>
+        {selectedItem && (
+          <div>
+            <h2>{selectedItem.title}</h2>
+            <img src={selectedItem.img} alt={selectedItem.title} />
+            <button onClick={closeModal}>Close</button>
+          </div>
+        )}
       </Modal>
     </div>
   );
